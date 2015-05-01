@@ -27,7 +27,7 @@ GEM
       gyoku (~> 1.2)
       httpi (~> 2.3)
       nokogiri (>= 1.4.0)
-      nori (~> 2.4)
+      nori (~> 2.4)GAr
       uuid (~> 2.3.7)
       wasabi (~> 3.4)
     sonos (0.3.6)
