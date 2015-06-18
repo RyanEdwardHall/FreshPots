@@ -27,13 +27,19 @@ speaker = system.speakers.first
 #   brewing = true
 # end
 
-after :pin => 4, :goes => :low do
-  if brewing
-    brewing = false
+count = 0
+
+after :pin => 17, :goes => :high do
+  if count == 0
+    count = 1
+	current_volume = speaker.volume
+	speaker.volume = 90
     Curl.post('https://hooks.slack.com/services/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', {:payload => '{"text": "/giphy fresh pots"}'})
-    speaker.play 'http://raspberrypi/' + audio[audio_index]
-    speaker.play
-    audio_index = (audio_index + 1) % audio.length
+	  speaker.play 'http://raspberrypi/' + audio[audio_index]
+	  speaker.play
+	  audio_index = (audio_index + 1) % audio.length
+	sleep 16
+	speaker.volume = current_volume
   end
 end
 
