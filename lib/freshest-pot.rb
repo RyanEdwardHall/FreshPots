@@ -20,21 +20,23 @@ audio.sort!
 system = Sonos::System.new
 speaker = system.speakers.first
 
-# after :pin => 4, :goes => :high do
-#   speaker.play 'http://raspberrypi/' + audio[audio_index]
-#   Curl.post('https://hooks.slack.com/services/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', {:payload => '{"text": "Something\'s brewing ..."}'})
-#   audio_index = (audio_index + 1) % audio.length
-#   brewing = true
-# end
+last_brewed = 0
 
-after :pin => 4, :goes => :low do
-  if brewing
-    brewing = false
-    Curl.post('https://hooks.slack.com/services/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', {:payload => '{"text": "/giphy fresh pots"}'})
-    speaker.play 'http://raspberrypi/' + audio[audio_index]
-    speaker.play
-    audio_index = (audio_index + 1) % audio.length
-  end
+after :pin => 17, :goes => :high do
+  return if (Time.now.getutc.to_i - last_brewed) < 30
+
+	current_volume = speaker.volume
+	speaker.volume = 90
+
+	Curl.post('https://hooks.slack.com/services/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', {:payload => '{"text": "/giphy fresh pots"}'})
+	speaker.play 'http://raspberrypi/' + audio[audio_index]
+	speaker.play
+	audio_index = (audio_index + 1) % audio.length
+
+  sleep 16
+	speaker.volume = current_volume
+
+  last_brewed = Time.now.getutc.to_i
 end
 
 PiPiper.wait
